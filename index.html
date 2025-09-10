@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Rose talks about anxiety </title>
+  <style>
+    body { margin:0; font-family:sans-serif; background:#f5f8fa; color:#232340; }
+    .container {
+      max-width: 440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      transition: all .2s;
+      min-height: 100vh;
+      background: #f5f8fa;
+    }
+    .container.horizontal {
+      max-width: 100vw;
+      margin: 0;
+      flex-direction: row;
+      min-height: 100vh;
+      height: 100vh;
+      background: #f5f8fa;
+    }
+    .left-panel {
+  width: 40%;
+  min-width: 320px;
+  background: #f5f8fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  z-index: 100;
+}
+
+    .right-panel {
+      width: 60%;
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      border-left: 2px solid #dbeafe;
+      min-height: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 0;
+    }
+    #fixed-top-group, #fixed-top-group-vert {
+      width: 100%;
+      background: #f5f8fa;
+      box-shadow: 0 4px 16px #d5dae533;
+      border-radius: 0 0 18px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding-bottom: 12px;
+    }
+    #player, #player-vert {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      border-radius: 18px 18px 0 0;
+      background: #000;
+      box-shadow: 0 2px 10px #cdd4e7;
+      display: block;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    #fixed-controls, #fixed-controls-vert {
+      width: 100%;
+      background: #f5f8fa;
+      border-radius: 0 0 18px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding-bottom: 4px;
+    }
+    #progress, #progress-vert {
+      margin:12px 18px 8px 18px;
+      font-size:17px;
+      font-weight:500;
+      text-align:right;
+    }
+    #controls, #controls-vert {
+      display:flex;
+      gap:10px;
+      margin:0 18px 10px 18px;
+      align-items:center;
+      justify-content:center;
+    }
+    #controls button, #controls-vert button {
+      font-size:15px; padding:7px 14px; border-radius:10px; border:none;
+      background:#dbeafe; color:#232340; cursor:pointer;
+      transition: .13s;
+      white-space: nowrap;
+    }
+    #controls button.active, #controls-vert button.active { background:#232340; color:#fff; }
+    #mode-btn, #layout-btn, #mode-btn-vert, #layout-btn-vert {
+      font-size:14px; padding:6px 12px; border-radius:9px; border:none;
+      background:#fed7aa; color:#c2410c; cursor:pointer; margin-left:8px;
+      white-space: nowrap;
+    }
+    #mode-btn.active, #layout-btn.active, #mode-btn-vert.active, #layout-btn-vert.active { background:#c2410c; color:#fff;}
+    #subs-vert {
+      display:flex; flex-direction:column; gap:12px;
+      padding:0 0 24px 0;
+      width: 100%;
+      align-items: center;
+      flex: 1;
+      overflow-y: auto;
+      max-height: calc(100vh - 330px);
+      min-height: 0;
+    }
+    #subs {
+      display:flex; flex-direction:column; gap:12px;
+      padding:0 0 24px 0;
+      width: 100%;
+      align-items: stretch;
+    }
+    .sub-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 100vw;
+      min-width: 0;
+      gap: 10px;
+      box-sizing: border-box;
+      margin: 0 auto;
+      transition: outline 0.15s, box-shadow 0.15s;
+    }
+    .sub-row.active {
+      outline: 3px solid #3b82f6 !important;
+      border-radius: 16px;
+      box-shadow: 0 0 0 2px #93c5fd66;
+      z-index: 1;
+    }
+    .sub-btn {
+      flex: 1 1 0%;
+      min-width: 0;
+      max-width: 100%;
+      font-size: 18px;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      background: #e0e7ff;
+      color: #232340;
+      text-align: left;
+      transition: .13s;
+      white-space: normal;
+      line-height: 1.3;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      box-sizing: border-box;
+    }
+    .hide-btn, .check-btn {
+      flex-shrink: 0;
+      min-width: 44px;
+      max-width: 44px;
+      height: 44px;
+      font-size: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .container.horizontal .sub-btn {
+      font-size: 30px;
+      padding: 18px 32px;
+    }
+    .container.horizontal .hide-btn,
+    .container.horizontal .check-btn {
+      font-size: 30px;
+      min-width: 52px;
+      max-width: 52px;
+      height: 52px;
+    }
+    .sub-btn:active { background:#a5b4fc; }
+    .sub-btn.learned { background:#a7f3d0; color:#157348; text-decoration:line-through; }
+    .hide-btn.active { color:#3b3b3b; }
+    .check-btn.checked { color:#22c55e; }
+    #vertical-root {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f5f8fa;
+      height: 100vh;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    #fixed-top-group-vert {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #f5f8fa;
+    }
+    @media (max-width: 900px) {
+      .container.horizontal .left-panel, .container.horizontal .right-panel { width: 100%; min-width:0;}
+      .container.horizontal { flex-direction: column; }
+    }
+    @media (max-width: 520px) {
+      .container, .container.horizontal { flex-direction: column !important; max-width: 100vw !important; }
+      .left-panel, .right-panel { width: 100% !important; min-width:0;}
+      #fixed-top-group, #fixed-top-group-vert { border-radius:0 0 14px 14px; }
+      #player, #player-vert { border-radius:0;}
+      #fixed-controls, #fixed-controls-vert { border-radius:0 0 14px 14px;}
+      .sub-btn { font-size:15px; padding:12px;}
+      #progress, #progress-vert { font-size:14px;}
+      #vertical-root { max-width: 100vw; }
+      .sub-row { max-width: 100vw; }
+      .sub-btn { max-width: 98vw; }
+      .container.horizontal .sub-btn { font-size: 18px; }
+      .container.horizontal .hide-btn, .container.horizontal .check-btn { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="container">
+  <!-- 가로모드(좌우) 패널 -->
+  <div class="left-panel" id="left-panel" style="display:none">
+    <div id="fixed-top-group">
+      <iframe id="player" src="https://www.youtube.com/embed/HM-xlfYUBI0?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div id="fixed-controls">
+        <div id="progress"></div>
+        <div id="controls">
+          <button id="show-all" class="active">전체 보기</button>
+          <button id="show-learned">외웠음 보기</button>
+          <button id="mode-btn" class="active">한줄 재생</button>
+          <button id="layout-btn" title="세로모드로 전환">세로모드</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel" id="right-panel" style="display:none">
+    <div id="subs"></div>
+  </div>
+  <!-- 세로모드 패널 -->
+  <div id="vertical-root">
+    <div id="fixed-top-group-vert">
+      <iframe id="player-vert" src="https://www.youtube.com/embed/HM-xlfYUBI0?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div id="fixed-controls-vert">
+        <div id="progress-vert"></div>
+        <div id="controls-vert">
+          <button id="show-all-vert" class="active">전체 보기</button>
+          <button id="show-learned-vert">외웠음 보기</button>
+          <button id="mode-btn-vert" class="active">한줄 재생</button>
+          <button id="layout-btn-vert" title="가로모드로 전환">가로모드</button>
+        </div>
+      </div>
+    </div>
+    <div id="subs-vert"></div>
+  </div>
+</div>
+<script>
+const SUBS = [{"text": "Did you, when you would go in the studio,","start": 0.046,"end": 1.609},{"text": "would you like be conscious not to like","start": 1.61,"end": 4.007},{"text": "go on Instagram and go on these at like","start": 4.008,"end": 6.358},{"text": "social and like read all these comments?","start": 6.359,"end": 7.968},{"text": "No.","start": 7.968,"end": 8.538},{"text": "You would still read them. Okay.","start": 8.539,"end": 10.226},{"text": "That's me. So that's very me.","start": 10.226,"end": 12.51},{"text": "I just be myself.","start": 12.511,"end": 13.71},{"text": "But that's something I do.","start": 13.711,"end": 15.24},{"text": "And you know what? And that's fine.","start": 15.284,"end": 16.2},{"text": "I'm ashamed but I do..","start": 16.38,"end": 18.106},{"text": "My screen time, you would be appalled.","start": 19.35,"end": 20.92},{"text": "You would be.","start": 21.33,"end": 21.864},{"text": "It's pretty disgusting mine as well.","start": 21.865,"end": 23.583},{"text": "I wake up and I'm like checking, checking, checking","start": 22.871,"end": 26.21},{"text": "cuz he posted the most outrageous Fxxx.","start": 27.66,"end": 30.057},{"text": "He's crazy.","start": 30.268,"end": 31.167},{"text": "My jaw, I was like, \"Wait, what the hell is happening?\"","start": 31.167,"end": 32.823},{"text": "Literally, he joked about it, he joked about it and I've,","start": 32.983,"end": 35.077},{"text": "and I called him twice like don't do it.","start": 35.078,"end": 36.757},{"text": "You're gonna get cancelled like literally don't do it.","start": 38.04,"end": 39.961},{"text": "He was laughing and he was like, \"It's gonna be so funny.\" I was like,","start": 39.962,"end": 42.0},{"text": "\"Don't you Fxxx.\" I was,","start": 42.0,"end": 42.9},{"text": "\"Don't... Don't you fucking dare.\"","start": 42.901,"end": 43.706},{"text": "I usually I'll tell him once and then I was like,","start": 43.707,"end": 45.03},{"text": "\"Oh shit, I feel like he's gonna actually do it.\"","start": 45.081,"end": 46.432},{"text": "Call them again.","start": 46.433,"end": 47.16},{"text": "Literally I was like don't do it.","start": 47.353,"end": 48.736},{"text": "And he's like, \"Ahh like just post the picture.\"","start": 48.737,"end": 51.149},{"text": "And then I was like, \"Okay, I'm gonna tease it now.\"","start": 51.474,"end": 53.091},{"text": "And then I tease it,","start": 53.092,"end": 53.74},{"text": "and then he leaves a comment and I'm like, \"OH MY GOD.\"","start": 53.74,"end": 55.684},{"text": "I was screaming.","start": 55.685,"end": 56.349},{"text": "I was like getting, \"Oh my god.\" I was getting on a flight.","start": 56.73,"end": 58.408},{"text": "Literally mid packing and I'm like, \"Ah.\"","start": 58.761,"end": 60.636},{"text": "I like screamed and like my team like ran in.","start": 61.86,"end": 63.626},{"text": "They're like, \"What happened?","start": 63.627,"end": 64.344},{"text": "Did someone die?\" They're like,","start": 64.344,"end": 65.632},{"text": "\"No, Bruno just posted the most annoying","start": 65.632,"end": 66.585},{"text": "[__] caption I've ever seen.\"","start": 66.585,"end": 67.5},{"text": "And I was like, \"He's crazy.\" He's crazy, yeah.","start": 67.5,"end": 69.07},{"text": "And then I'm just like trying to check like,","start": 69.69,"end": 71.19},{"text": "you know, like the reactions and stuff.","start": 71.34,"end": 72.668},{"text": "I'm like, \"Oh, he posted the p.. like the other picture.","start": 72.699,"end": 74.7},{"text": "And he has that whole fanfic thing.","start": 74.894,"end": 76.573},{"text": "Are you kidding these?","start": 77.229,"end": 78.66},{"text": "It is the craziest.","start": 78.73,"end": 80.25},{"text": "My jaw hit the floor.","start": 81.81,"end": 82.646},{"text": "But can I tell you it was the best song promo ever.","start": 82.647,"end": 84.78},{"text": "This is serious for me.","start": 86.08,"end": 87.173},{"text": "I've been waiting, you know, to release a song for so long.","start": 87.174,"end": 90.041},{"text": "Like, \"You're so annoying.\" Yeah, he's funny.","start": 91.47,"end": 93.24},{"text": "It was funny.","start": 94.164,"end": 94.753},{"text": "A pain in your ass but he is funny.","start": 94.754,"end": 95.77},{"text": "Do you ever like think about something","start": 95.771,"end": 97.184},{"text": "and you're like, \"Oh, that was anxiety. I just didn't know it at the time.\"","start": 97.185,"end": 100.261},{"text": "I have this to remind me. I have anxiety.","start": 100.262,"end": 102.51},{"text": "If I'm going for it, I'm like, \"I know I have anxiety.\"","start": 102.644,"end": 104.85},{"text": "So, I know how to like articulate.","start": 105.03,"end": 106.819},{"text": "Like, I know how to tell people. I'm like, \"I'm getting anxiety.\"","start": 106.82,"end": 108.937},{"text": "You know, some people are like,","start": 109.44,"end": 110.229},{"text": "\"What's the vibe has changed?\"","start": 110.236,"end": 112.228},{"text": "And I'll be like, \"I have anxiety.\"","start": 112.228,"end": 113.681},{"text": "And I'll tell myself, \"I just need like 5 minutes.\"","start": 113.735,"end": 115.86},{"text": "I need a squishy break is what I say.","start": 116.689,"end": 118.189},{"text": "You know how people go for smoke breaks.","start": 118.2,"end": 119.457},{"text": "I need a squishy break.","start": 120.93,"end": 122.11},{"text": "I know my boyfriend of four years is about to propose","start": 122.111,"end": 125.025},{"text": "and I've given him no reason to think I'd say no,","start": 125.273,"end": 127.289},{"text": "but I feel like maybe I should say no.","start": 127.29,"end": 128.91},{"text": "He's just kind of been giving me the ick for the past 5 months.","start": 129.27,"end": 131.76},{"text": "Is that normal?","start": 131.88,"end": 132.677},{"text": "Why is that? Why would that not be normal?","start": 132.678,"end": 134.147},{"text": "I think it's normal, too.","start": 134.148,"end": 135.06},{"text": "I feel like that's pre-engagement jitters. Or maybe.","start": 135.061,"end": 137.193},{"text": "Well, I've never been engaged.","start": 137.194,"end": 138.178},{"text": "Neither have I.","start": 138.179,"end": 138.79},{"text": "I've also never had a boyfriend,","start": 139.68,"end": 140.76},{"text": "so like I'm the worst. But to me,","start": 141.12,"end": 143.003},{"text": "it sounds like she doesn't want to be engaged.","start": 143.004,"end": 145.37},{"text": "No, she might feel bad cuz she starts feeling like she's not liking him,","start": 145.371,"end": 148.924},{"text": "but then she's he's probably a good guy, whatever.","start": 148.925,"end": 150.72},{"text": "But it's probably not about him.","start": 150.87,"end": 152.01},{"text": "It's probably about something each other.","start": 152.13,"end": 154.08},{"text": "Probably about something she wants and what she doesn't want,","start": 154.44,"end": 156.573},{"text": "probably it needs much more conversation.","start": 156.574,"end": 159.18},{"text": "So I think it probably be best","start": 159.181,"end": 160.352},{"text": "if you don't focus on the ick,","start": 160.353,"end": 162.242},{"text": "because of the ick you should start bringing out emotions","start": 162.243,"end": 164.79},{"text": "and conversations but out of love.","start": 165.12,"end": 166.503},{"text": "We're about to get engaged and I don't want to get engaged with you.","start": 166.504,"end": 168.34},{"text": "Not that but like let's talk about this, like","start": 168.341,"end": 170.73},{"text": "I'm feeling a little bit of an ick.","start": 170.88,"end": 172.099},{"text": "And I don't...","start": 172.1,"end": 172.904},{"text": "She probably has to think about what she thinks, what she's thinking instead of about him.","start": 172.905,"end": 175.982},{"text": "Damn. You give amazing advice.","start": 175.983,"end": 178.47}];
+
+
+
+const STORAGE_KEY = 'subStatus_asianfood_yt';
+let status = {};
+let mode = 'vertical'; // vertical | horizontal
+let playingSubIdx = null;
+let pausedSubIdx = null;
+let paused = false;
+let playMode = 'single';
+let timeoutId, player, playerVert, currentView = 'all';
+
+// 추가: 마지막 클릭 자막 index
+let selectedSubIdx = null;
+
+function loadStatus() {
+  try {
+    status = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    for (let i=0; i<SUBS.length; i++) {
+      if (!status[i]) status[i]={hide:false,learned:false};
+    }
+  } catch { status = {}; }
+}
+function saveStatus() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(status));
+}
+
+function renderSubs(view='all', mode='vertical') {
+  const subsDiv = (mode==='vertical') ? document.getElementById('subs-vert') : document.getElementById('subs');
+  subsDiv.innerHTML = '';
+  let learned = 0;
+  SUBS.forEach((sub, idx) => {
+    if (view==='learned' && !status[idx].learned) return;
+    if (status[idx].learned) learned++;
+    const row = document.createElement('div');
+    row.className = 'sub-row';
+    if (idx === selectedSubIdx) row.className += ' active';
+    const btn = document.createElement('button');
+    btn.className = 'sub-btn' + (status[idx].learned ? ' learned':'');
+    btn.innerText = status[idx].hide ? '🙈' : sub.text;
+    btn.onclick = () => playPauseOrRestartSub(idx, mode);
+    const hideBtn = document.createElement('button');
+    hideBtn.className = 'hide-btn' + (status[idx].hide ? ' active' : '');
+    hideBtn.innerText = '🙈';
+    hideBtn.title = status[idx].hide ? '자막 보이기' : '자막 숨기기';
+    hideBtn.onclick = (e) => {
+      status[idx].hide = !status[idx].hide;
+      saveStatus(); renderSubs(currentView, mode);
+      e.stopPropagation();
+    };
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'check-btn' + (status[idx].learned ? ' checked':'');
+    checkBtn.innerText = '✔️';
+    checkBtn.title = status[idx].learned ? '외웠음 해제' : '외웠음';
+    checkBtn.onclick = (e) => {
+      status[idx].learned = !status[idx].learned;
+      saveStatus(); renderSubs(currentView, mode);
+      e.stopPropagation();
+    };
+    row.appendChild(btn);
+    row.appendChild(hideBtn);
+    row.appendChild(checkBtn);
+    subsDiv.appendChild(row);
+  });
+  let percent = SUBS.length ? Math.round(learned/SUBS.length*100) : 0;
+  const prog = (mode==='vertical') ? document.getElementById('progress-vert') : document.getElementById('progress');
+  if (prog) prog.innerHTML =
+    `진행률: <b>${percent}%</b> (${learned}/${SUBS.length})`;
+}
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player');
+  playerVert = new YT.Player('player-vert');
+}
+window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
+// 클릭한 자막 줄만 테두리 남기고, 재생이 끝나도 유지
+function playPauseOrRestartSub(idx, mode='vertical') {
+  selectedSubIdx = idx;
+  renderSubs(currentView, mode);
+  const curPlayer = (mode === 'vertical') ? playerVert : player;
+  if (!curPlayer || !curPlayer.seekTo) return;
+  const state = curPlayer.getPlayerState();
+  if (playingSubIdx !== idx) {
+    playSubByMode(idx, mode);
+    playingSubIdx = idx;
+    pausedSubIdx = null;
+    paused = false;
+    return;
+  }
+  if (state === 1) {
+    curPlayer.pauseVideo();
+    if (timeoutId) clearTimeout(timeoutId);
+    paused = true;
+    pausedSubIdx = idx;
+    playingSubIdx = null;
+    return;
+  }
+  if (state === 2 && paused && pausedSubIdx === idx) {
+    playSubByMode(idx, mode);
+    playingSubIdx = idx;
+    paused = false;
+    pausedSubIdx = null;
+    return;
+  }
+  playSubByMode(idx, mode);
+  playingSubIdx = idx;
+  paused = false;
+  pausedSubIdx = null;
+}
+function playSubByMode(idx, mode='vertical') {
+  const curPlayer = (mode === 'vertical') ? playerVert : player;
+  let start = SUBS[idx].start;
+  let end;
+  if (playMode === 'single') {
+    end = SUBS[idx].end;
+  } else {
+    end = (SUBS[idx+1] ? SUBS[idx+1].end : SUBS[idx].end);
+  }
+  curPlayer.seekTo(start, true);
+  curPlayer.playVideo();
+  if (timeoutId) clearTimeout(timeoutId);
+  timeoutId = setTimeout(() => {
+    curPlayer.pauseVideo();
+    playingSubIdx = null;
+    paused = false;
+    pausedSubIdx = null;
+    // 재생 종료 시에도 selectedSubIdx는 그대로, outline 유지!
+  }, (end - start) * 1000);
+}
+function setLayout(newMode) {
+  mode = newMode;
+  const cont = document.getElementById('container');
+  if (mode === 'horizontal') {
+    cont.classList.add('horizontal');
+    document.getElementById('left-panel').style.display = '';
+    document.getElementById('right-panel').style.display = '';
+    document.getElementById('vertical-root').style.display = 'none';
+    renderSubs(currentView, 'horizontal');
+  } else {
+    cont.classList.remove('horizontal');
+    document.getElementById('left-panel').style.display = 'none';
+    document.getElementById('right-panel').style.display = 'none';
+    document.getElementById('vertical-root').style.display = '';
+    renderSubs(currentView, 'vertical');
+  }
+}
+function setHandlers() {
+  // 세로모드
+  document.getElementById('show-all-vert').onclick = function() {
+    currentView='all';
+    this.classList.add('active');
+    document.getElementById('show-learned-vert').classList.remove('active');
+    renderSubs('all', 'vertical');
+  };
+  document.getElementById('show-learned-vert').onclick = function() {
+    currentView='learned';
+    this.classList.add('active');
+    document.getElementById('show-all-vert').classList.remove('active');
+    renderSubs('learned', 'vertical');
+  };
+  document.getElementById('mode-btn-vert').onclick = function() {
+    if (playMode === 'single') {
+      playMode = 'next';
+      this.textContent = '다음줄까지 재생';
+      this.classList.add('active');
+    } else {
+      playMode = 'single';
+      this.textContent = '한줄 재생';
+      this.classList.remove('active');
+    }
+  };
+  document.getElementById('layout-btn-vert').onclick = function() {
+    setLayout('horizontal');
+  };
+  // 가로모드
+  document.getElementById('show-all').onclick = function() {
+    currentView='all';
+    this.classList.add('active');
+    document.getElementById('show-learned').classList.remove('active');
+    renderSubs('all', 'horizontal');
+  };
+  document.getElementById('show-learned').onclick = function() {
+    currentView='learned';
+    this.classList.add('active');
+    document.getElementById('show-all').classList.remove('active');
+    renderSubs('learned', 'horizontal');
+  };
+  document.getElementById('mode-btn').onclick = function() {
+    if (playMode === 'single') {
+      playMode = 'next';
+      this.textContent = '다음줄까지 재생';
+      this.classList.add('active');
+    } else {
+      playMode = 'single';
+      this.textContent = '한줄 재생';
+      this.classList.remove('active');
+    }
+  };
+  document.getElementById('layout-btn').onclick = function() {
+    setLayout('vertical');
+  };
+}
+window.onload = function() {
+  loadStatus();
+  setHandlers();
+  setLayout('vertical'); // 기본 세로모드
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+};
+</script>
+</body>
+</html>
